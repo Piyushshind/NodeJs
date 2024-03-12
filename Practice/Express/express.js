@@ -8,7 +8,7 @@ const allCourses = [
     { id: 1, name: 'corse1' },
     { id: 2, name: 'corse2' },
     { id: 3, name: 'corse3' }
-];
+]; 
 
 app.get('/', (req, res) => {
     res.send('hello World');
