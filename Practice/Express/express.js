@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -25,6 +26,20 @@ app.get('/api/courses/:id', (req, res) => {
 })
 
 app.post('/api/courses', (req, res) => {
+    const schema = Joi.object({
+        name: Joi.string()
+            .min(5)
+            .max(30)
+            .required(),
+    });
+    const result = Joi.validate(req.body, schema);
+    console.log(result);
+
+    if (!req.body.name || req.body.name.length < 3) res.status(400).send('name is required')
+    return;
+})
+
+app.post('/api/courses', (req, res) => {
     const course = {
         id: allCourses.length + 1,
         name: req.body.name
@@ -33,4 +48,4 @@ app.post('/api/courses', (req, res) => {
     res.send(allCourses);
 })
 
-app.listen(port, () => console.log(`app is running on port ${port}...`));
+app.listen(port, () => console.log(`app is running on port ${port}... `));
