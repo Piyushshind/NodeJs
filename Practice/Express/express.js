@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -8,7 +8,7 @@ const allCourses = [
     { id: 1, name: 'corse1' },
     { id: 2, name: 'corse2' },
     { id: 3, name: 'corse3' }
-]; 
+];
 
 app.get('/', (req, res) => {
     res.send('hello World');
@@ -27,17 +27,32 @@ app.get('/api/courses/:id', (req, res) => {
 
 app.post('/api/courses', (req, res) => {
     const schema = Joi.object({
-        name: Joi.string()
-            .min(5)
-            .max(30)
-            .required(),
+        name: Joi.string().min(5).max(30).required(),
     });
     const result = Joi.validate(req.body, schema);
-    console.log(result);
 
-    if (!req.body.name || req.body.name.length < 3) res.status(400).send('name is required')
-    return;
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
 })
+
+app.put('/api/courses/:id', (req, res) => {
+    const course = allCourses.find(c => c.id === parseInt(req.params.id));
+    if (!course) res.status(404).send('the givin course is not fount');
+
+    const { error } = validateCourse(req.body)
+    if (error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+})
+function validateCourse(course) {
+    const schema = Joi.object({
+        name: Joi.string().min(5).max(30).required(),
+    });
+    return Joi.validate(course, schema);
+}
 
 app.post('/api/courses', (req, res) => {
     const course = {
